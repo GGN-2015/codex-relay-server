@@ -17,16 +17,16 @@ Use this when one computer can reach the upstream model provider, but other comp
 
 ## Installation
 
-```powershell
-.\venv\Scripts\python.exe -m pip install -e ".[dev]"
+```bash
+pip install codex-relay-server
 ```
 
 ## Configuration
 
 Copy the example config:
 
-```powershell
-Copy-Item config.example.json config.json
+```bash
+cp config.example.json config.json
 ```
 
 Edit `config.json`:
@@ -131,18 +131,18 @@ app = create_app(settings)
 
 ## Run
 
-```powershell
-.\venv\Scripts\python.exe -m codex_relay_server --config config.json
+```bash
+codex-relay-server --config config.json
 ```
 
 You can temporarily override the bind address, port, upstream URL, and local base path:
 
-```powershell
-.\venv\Scripts\python.exe -m codex_relay_server `
-  --config config.json `
-  --host 0.0.0.0 `
-  --port 8000 `
-  --upstream-url https://your-upstream.example/custom-api `
+```bash
+codex-relay-server \
+  --config config.json \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --upstream-url https://your-upstream.example/custom-api \
   --local-base-path /openai
 ```
 
@@ -155,8 +155,8 @@ api_key = <client-key>
 
 ## Tests
 
-```powershell
-.\venv\Scripts\python.exe -m pytest
+```bash
+python -m pytest
 ```
 
 Tests use a local mock upstream and do not need a real API key.
