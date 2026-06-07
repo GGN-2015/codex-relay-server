@@ -6,7 +6,7 @@ from typing import Any
 
 import uvicorn
 
-from .config import load_settings
+from .config import Settings, load_settings
 from .relay import create_app
 
 
@@ -57,6 +57,7 @@ def main() -> None:
         settings = type(settings).model_validate(_deep_update(settings.model_dump(mode="python"), updates))
 
     app = create_app(settings)
+    print(f"Default access endpoint: {build_default_access_endpoint(settings)}", flush=True)
     uvicorn.run(app, host=settings.server.host, port=settings.server.port, log_level=settings.server.log_level)
 
 
@@ -76,3 +77,16 @@ def _deep_update(original: dict[str, Any], updates: dict[str, Any]) -> dict[str,
         else:
             original[key] = value
     return original
+
+
+def build_default_access_endpoint(settings: Settings) -> str:
+    host = settings.server.host.strip()
+    if host in {"0.0.0.0", "::"}:
+        host = "127.0.0.1"
+    elif ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+
+    endpoint = f"http://{host}:{settings.server.port}"
+    if settings.relay.local_base_path != "/":
+        endpoint = f"{endpoint}{settings.relay.local_base_path}"
+    return endpoint
